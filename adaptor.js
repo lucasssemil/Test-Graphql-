@@ -161,34 +161,16 @@ const schema = new GraphQLSchema({
     query: QueryRoot,
     mutation: MutationRoot
  });
-  
- const verifyToken = (req, res, next) => {  
-  jwt.verify(
-    req.headers.authorization, 
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb28iOiJiYXIifQ.UIZchxQD36xuhacrJF9HQ5SIUxH5HBiv9noESAacsxU', 
-    (err, decoded) => {
-    if (err){      
-      console.log(err)
-      return res.sendStatus(401);
-    }
-    console.log("next")
-    next();
-  });
-}
 
-verifyToken.unless = unless;
   // Create the Express app
 const app = express();
 app.use( cors() );
-app.post('/auth', (req, res) => {
-  const token = jwt.sign(
-    { foo: 'bar' }, 
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb28iOiJiYXIifQ.UIZchxQD36xuhacrJF9HQ5SIUxH5HBiv9noESAacsxU'
-    );
-  res.sendStatus(token);
-})
 
-app.use(verifyToken);
+
+app.use((req, res, next)=>{
+  console.log(`${req.method}`)
+  next()
+})
 app.use('/api',graphqlHTTP({
     schema:schema,
     graphiql:true
